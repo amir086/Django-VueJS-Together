@@ -5,21 +5,25 @@ var BundleTracker = require('webpack-bundle-tracker');
 // Directory for deployed assets. It should be within our static files path.
 // Backslash at the end is not required.
 var dist_dir = '/static/dist';
-
+var pluginsList = [
+    new BundleTracker({filename: './webpack-stats.json'})
+];
+if (process.env.NODE_ENV === 'production') {
+    pluginsList.push(
+        new webpack.DefinePlugin({
+            'process.env': {
+                NODE_ENV: '"production"'
+            }
+        })
+    )
+}
 module.exports = {
     entry: ['./frontend/main.js'],
     output: {
         path: path.resolve(__dirname, '.' + dist_dir + '/'),
         filename: '[name]-[hash].js'
     },
-    plugins: [
-        new BundleTracker({filename: './webpack-stats.json'}),
-        new webpack.DefinePlugin({
-            'process.env': {
-                NODE_ENV: '"production"'
-            }
-        })
-    ],
+    plugins: pluginsList,
     module: {
         rules: [
             {
